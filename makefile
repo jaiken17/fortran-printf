@@ -3,6 +3,8 @@ CFLAGS = -c -o
 FORT = gfortran
 FFLAGS = -o
 
+VPATH=c_source:interface
+
 OBJS = printf_fort.obj printf.obj
 
 main: main.f90 $(OBJS)
@@ -15,4 +17,4 @@ printf.obj: printf.c printf.h
 	$(CXX) $(CFLAGS) $@ $<
 
 clean:
-	rm main $(OBJS) main
+	rm main $(OBJS)
