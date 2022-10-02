@@ -19,13 +19,20 @@ module printf_fort
 
     interface printf
 
-        module procedure printf_1_int_f, printf_1_real4_f
+        module procedure printf_none_f, printf_1_int_f, printf_1_real4_f
 
     end interface printf
 
 
 
     interface
+        function printf_none(fmt) result(ierr) bind(C, name="printf_none_c")
+            import C_CHAR, C_INT
+            implicit none
+            character(kind=C_CHAR),intent(in) :: fmt(*)
+            integer(C_INT) :: ierr
+        end function printf_none
+
         function printf_1_int(fmt, val) result(ierr) bind(C, name="printf_1_int_c")
             import C_CHAR, C_INT
             implicit none
@@ -42,12 +49,26 @@ module printf_fort
             integer(C_INT) :: ierr
         end function printf_1_float
 
-
     end interface
 
 
 
 contains
+
+    function printf_none_f(fmt) result(ierr)
+        character(len=*),intent(in) :: fmt
+        integer :: ierr
+
+        character(len=len(fmt)+1, kind=C_CHAR) :: fmt_c
+        integer(C_INT) :: ierr_c
+
+        fmt_c = fmt//C_NULL_CHAR
+
+        ierr_c = printf_none(fmt_c)
+        ierr = int(ierr_c, kind=kind(ierr))
+
+    end function printf_none_f
+
 
     function printf_1_int_f(fmt, val) result(ierr)
         character(len=*),intent(in) :: fmt
